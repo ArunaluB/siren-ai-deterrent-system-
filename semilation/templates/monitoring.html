@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildlife Monitoring & Prediction System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/monitoring.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <h1>🦏 Wildlife Intelligence Platform</h1>
+                <span class="nav-subtitle">Advanced Monitoring & Prediction System</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="/" style="padding: 8px 16px; background: #2563eb; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 0.9rem; transition: all 0.3s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                    ← Deterrence System
+                </a>
+                <div class="nav-status">
+                    <div class="status-indicator" id="system-status">
+                        <span class="status-dot"></span>
+                        <span>System Online</span>
+                    </div>
+                    <div class="last-update" id="last-update">Last Update: --</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard-grid">
+            <!-- Left Column: Overview & Units -->
+            <div class="dashboard-column">
+                <!-- System Overview -->
+                <div class="card overview-card">
+                    <h2>System Overview</h2>
+                    <div class="overview-stats">
+                        <div class="stat-box">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="total-detections">0</div>
+                                <div class="stat-label">Total Detections</div>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon">🔋</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="active-units">0</div>
+                                <div class="stat-label">Active Units</div>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="system-health">0%</div>
+                                <div class="stat-label">System Health</div>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-icon">⚠️</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="active-alerts">0</div>
+                                <div class="stat-label">Active Alerts</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unit Health Monitoring -->
+                <div class="card">
+                    <h2>Unit Health Monitoring</h2>
+                    <div class="unit-grid" id="unit-grid">
+                        <!-- Units will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Recent Detections -->
+                <div class="card">
+                    <h2>Recent Detections</h2>
+                    <div class="detections-list" id="detections-list">
+                        <div class="empty-state">No detections yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column: Predictions & Analytics -->
+            <div class="dashboard-column">
+                <!-- Future Predictions -->
+                <div class="card">
+                    <h2>Future Activity Predictions</h2>
+                    <div class="prediction-controls">
+                        <button class="btn btn-primary" id="generate-predictions-btn">
+                            Generate 24h Predictions
+                        </button>
+                        <select id="prediction-hours" class="select-input">
+                            <option value="24">24 Hours</option>
+                            <option value="48">48 Hours</option>
+                            <option value="72">72 Hours</option>
+                        </select>
+                    </div>
+                    <canvas id="predictions-chart"></canvas>
+                    <div class="prediction-summary" id="prediction-summary"></div>
+                </div>
+
+                <!-- Activity Trends -->
+                <div class="card">
+                    <h2>Activity Trends</h2>
+                    <canvas id="trends-chart"></canvas>
+                </div>
+
+                <!-- Temporal Patterns -->
+                <div class="card">
+                    <h2>Hourly Activity Patterns</h2>
+                    <canvas id="hourly-patterns-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Right Column: Recommendations & Insights -->
+            <div class="dashboard-column">
+                <!-- Decision Support Recommendations -->
+                <div class="card recommendations-card">
+                    <h2>Decision Support Recommendations</h2>
+                    <div class="priority-badge" id="priority-badge">
+                        <span class="priority-label">Priority:</span>
+                        <span class="priority-value" id="priority-value">Low</span>
+                    </div>
+                    <div class="recommendations-list" id="recommendations-list">
+                        <div class="empty-state">Loading recommendations...</div>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <div class="card alerts-card">
+                    <h2>Active Alerts</h2>
+                    <div class="alerts-list" id="alerts-list">
+                        <div class="empty-state">No active alerts</div>
+                    </div>
+                </div>
+
+                <!-- Analytics Insights -->
+                <div class="card">
+                    <h2>Analytics Insights</h2>
+                    <div class="insights-grid" id="insights-grid">
+                        <!-- Insights will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom: Detailed Analytics -->
+        <div class="analytics-section">
+            <div class="card full-width">
+                <h2>Comprehensive Analytics Dashboard</h2>
+                <div class="analytics-tabs">
+                    <button class="tab-btn active" data-tab="overview">Overview</button>
+                    <button class="tab-btn" data-tab="patterns">Patterns</button>
+                    <button class="tab-btn" data-tab="units">Unit Performance</button>
+                    <button class="tab-btn" data-tab="effectiveness">Effectiveness</button>
+                </div>
+                <div class="tab-content active" id="tab-overview">
+                    <div class="analytics-content" id="analytics-overview"></div>
+                </div>
+                <div class="tab-content" id="tab-patterns">
+                    <div class="analytics-content" id="analytics-patterns"></div>
+                </div>
+                <div class="tab-content" id="tab-units">
+                    <div class="analytics-content" id="analytics-units"></div>
+                </div>
+                <div class="tab-content" id="tab-effectiveness">
+                    <div class="analytics-content" id="analytics-effectiveness"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading data...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/monitoring.js') }}"></script>
+</body>
+</html>

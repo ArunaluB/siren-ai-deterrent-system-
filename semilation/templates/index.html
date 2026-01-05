@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elephant Deterrence RL System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div>
+                    <h1>🐘 Siren Ai Elephant Deterrence System</h1>
+                    <p class="subtitle">Reinforcement Learning & Habituation Prevention</p>
+                </div>
+                <a href="/monitoring" style="padding: 10px 20px; background: #7c3aed; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='#6d28d9'" onmouseout="this.style.background='#7c3aed'">
+                    📊 Monitoring Dashboard →
+                </a>
+            </div>
+            <div class="status-bar">
+                <span id="status-indicator" class="status-badge">Not Initialized</span>
+                <span id="habituation-score" class="habituation-badge">Habituation: 0.00</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel: Controls -->
+            <div class="left-panel">
+                <div class="card">
+                    <h2>System Control</h2>
+                    <div class="button-group">
+                        <button id="init-btn" class="btn btn-primary">Initialize Model</button>
+                        <button id="train-btn" class="btn btn-secondary" disabled>Train Model</button>
+                        <button id="generate-btn" class="btn btn-success" disabled>Generate Sample Data</button>
+                        <button id="auto-simulate-btn" class="btn btn-outline" disabled>🔄 Auto Simulate</button>
+                    </div>
+                    <div class="info-text">
+                        <p>Step 1: Initialize → Step 2: Train → Step 3: Generate Sample → Step 4: Predict</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Input Parameters</h2>
+                    <div class="input-grid" id="input-grid">
+                        <!-- Inputs will be generated dynamically -->
+                    </div>
+                    <div class="button-group">
+                        <button id="predict-btn" class="btn btn-primary" disabled>Run Prediction</button>
+                        <button id="clear-btn" class="btn btn-outline">Clear</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Action Selection</h2>
+                    <div id="action-display" class="action-display">
+                        <div class="action-item" data-action="0">
+                            <span class="action-icon">👁️</span>
+                            <span class="action-name">OBSERVE</span>
+                        </div>
+                        <div class="action-item" data-action="1">
+                            <span class="action-icon">🐝</span>
+                            <span class="action-name">SPARSE_BIO</span>
+                        </div>
+                        <div class="action-item" data-action="2">
+                            <span class="action-icon">📡</span>
+                            <span class="action-name">DIRECTIONAL</span>
+                        </div>
+                        <div class="action-item" data-action="3">
+                            <span class="action-icon">🌈</span>
+                            <span class="action-name">MULTI_SPECTRAL</span>
+                        </div>
+                        <div class="action-item" data-action="4">
+                            <span class="action-icon">🚨</span>
+                            <span class="action-name">HUMAN_ALERT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Results & Visualizations -->
+            <div class="right-panel">
+                <div class="card">
+                    <h2>Prediction Results</h2>
+                    <div id="results-container">
+                        <div class="result-placeholder">
+                            <p>Run a prediction to see results</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Metrics Dashboard</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">Predicted Class</div>
+                            <div id="metric-class" class="metric-value">-</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Confidence</div>
+                            <div id="metric-confidence" class="metric-value">-</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Threat Level</div>
+                            <div id="metric-threat" class="metric-value">-</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Human Risk</div>
+                            <div id="metric-human-risk" class="metric-value">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Q-Values Visualization</h2>
+                    <canvas id="qvalues-chart"></canvas>
+                </div>
+
+                <div class="card">
+                    <h2>Training Metrics</h2>
+                    <canvas id="training-metrics-chart"></canvas>
+                </div>
+
+                <div class="card">
+                    <h2>Feature Importance</h2>
+                    <canvas id="feature-importance-chart"></canvas>
+                </div>
+
+                <div class="card">
+                    <h2>Sound Control</h2>
+                    <div class="sound-controls">
+                        <div class="info-text">
+                            <p>🔊 Sounds play automatically during predictions and simulations</p>
+                        </div>
+                        <div id="sound-status" class="sound-status"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Model Statistics</h2>
+                    <div id="model-stats" class="model-stats">
+                        <p class="stats-placeholder">Train model to see statistics</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Real-Time Simulation</h2>
+                    <div class="simulation-controls">
+                        <button id="simulate-btn" class="btn btn-primary" disabled>
+                            🎮 Run Simulation (10 Steps)
+                        </button>
+                        <div id="simulation-results" class="simulation-results"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Algorithm Workflow & Logs</h2>
+                    <div class="workflow-controls">
+                        <button id="clear-logs-btn" class="btn btn-outline">Clear Logs</button>
+                        <button id="export-logs-btn" class="btn btn-outline">Export Logs</button>
+                    </div>
+                    <div id="workflow-log" class="workflow-log">
+                        <div class="log-entry info">
+                            <span class="log-time">[System]</span>
+                            <span class="log-message">Workflow log initialized. Ready to track model operations.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Progress Modal -->
+        <div id="training-modal" class="modal">
+            <div class="modal-content">
+                <h2>Training in Progress</h2>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <p id="progress-text">Initializing...</p>
+                <canvas id="training-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
